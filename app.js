@@ -219,7 +219,69 @@ app.post('/update_forms', async (req, res) => {
             error: err
         })
     }
+})
 
+app.delete('/delete_form', async (req, res) => {
+
+    let id = req.body.id;
+
+    if(!id) {
+        return res.send({
+            status: 404,
+            message: "Missing Parameter"
+        })
+    }
+
+    try {
+
+        let formDb = await FormModel.findOneAndDelete({_id: id}); 
+
+        if(!formDb) {
+            return res.send({
+                status: 401,
+                message: "Failed to find any data"
+            })
+        }
+
+        return res.send({
+            status: 200,
+            message: "Deleted Successfully",
+            data: formDb
+        })
+
+    }
+    catch(err) {
+        return res.send({
+            status: 400,
+            message: "Delete Unsuccessful",
+            error: err
+        })
+    }
+})
+
+app.delete('/delete_forms', async (req, res) => {
+
+    let name = req.body.name;
+    let grade = req.body.grade;
+
+    try {
+
+        let formDb = await FormModel.deleteMany({name: name, grade: grade});
+
+        return res.send({
+            status: 200,
+            message: "Deleted Successfully",
+            data: formDb
+        })
+
+    }
+    catch(err) {
+        return res.send({
+            status: 400,
+            message: "Delete Unsuccessful",
+            error: err
+        })
+    }
 })
 
 app.get('/myapi/rohan', (req, res) => {
@@ -277,3 +339,12 @@ app.listen(4000, () => {
 // fuser -k 4000/tcp - LINUX
 // netstat -ano | findstr :4000, TASKKILL /PID process_number /F - Windows
 //  ps -ef | grep 4000, kill -9 process_number - MAC
+
+
+// PUT - Add data == Create Op
+// Patch - Update data == Update op
+// Delete - Delete Operation == Delete Op
+
+// POST - Search, read, update, logic 
+
+// axios
